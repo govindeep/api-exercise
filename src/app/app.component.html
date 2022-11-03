@@ -1,0 +1,49 @@
+<div class="content container mt-2" role="main">
+  <h1 class="text-center">Welcome to Govi's Api Exercise!</h1>
+  <div class="mt-4">
+    <form [formGroup]="searchForm" (ngSubmit)="submitted=true; searchForm.valid && searchForm.valid && getRepos()"
+      class="d-flex justify-content-center flex-column">
+      <div class="text-center my-3">
+        <input id="searchInput" type="text" placeholder="Enter repo name to seach" formControlName="searchInput" />
+        <div *ngIf="searchInput?.invalid && (searchInput?.dirty || searchInput?.touched || submitted)"
+          class="error-message">Please enter a valid Org name</div>
+
+      </div>
+      <div class="text-center">
+        <button class="w-auto" type="submit">Search</button>
+      </div>
+    </form>
+  </div>
+  <div class="mt-4 row">
+    <div class="col-6 search-results">
+      <h2>Search Results</h2>
+      <div *ngIf="searchResults$ | async as searchResults; else noSearchResults">
+        <div *ngFor="let item of searchResults" class="item">
+          <a class="repo-item" (click)="showRepoDetails(item)">{{item.name}}</a>
+        </div>
+      </div>
+      <ng-template #noSearchResults> No Results to show</ng-template>
+    </div>
+
+    <div class="col-6 repo-details">
+      <h2>Issues</h2>
+      <div *ngIf="repoIssues$ | async as repoDetails; else noRepoDetails">
+        <div *ngIf="repoDetails?.issues?.length > 0; else noIssuesInRepo">
+          <p>Reported in {{repoDetails.name}}</p>
+          <p *ngFor="let issue of repoDetails.issues">
+            <a [href]="issue.html_url" target="_blank">{{issue.title}}</a>
+            :
+            <span> {{issue.state}}</span>
+          </p>
+        </div>
+        <ng-template #noIssuesInRepo>
+          <p>No issues reported in {{repoDetails?.name}}</p>
+        </ng-template>
+      </div>
+      <ng-template #noRepoDetails> No Issues to show</ng-template>
+    </div>
+
+  </div>
+</div>
+
+<router-outlet></router-outlet>
